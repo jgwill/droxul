@@ -342,7 +342,7 @@ function check_http_response
 
     #Checking response file for generic errors
     if grep -q "^HTTP/[12].* 400" "$RESPONSE_FILE"; then
-        ERROR_MSG=$(sed -n -e 's/{"error": "\([^"]*\)"}/\1/p' "$RESPONSE_FILE")
+        ERROR_MSG=$(sed -n -e 's/.*"error": *"\([^"]*\)".*/\1/p' "$RESPONSE_FILE")
 
         case $ERROR_MSG in
              *access?attempt?failed?because?this?app?is?not?configured?to?have*)
@@ -931,16 +931,16 @@ function db_account_info
     #Check
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
 
-        name=$(sed -n 's/.*"display_name": "\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+        name=$(sed -n 's/.*"display_name": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
         echo -e "\n\nName:\t\t$name"
 
-        uid=$(sed -n 's/.*"account_id": "\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+        uid=$(sed -n 's/.*"account_id": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
         echo -e "UID:\t\t$uid"
 
-        email=$(sed -n 's/.*"email": "\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+        email=$(sed -n 's/.*"email": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
         echo -e "Email:\t\t$email"
 
-        country=$(sed -n 's/.*"country": "\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+        country=$(sed -n 's/.*"country": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
         echo -e "Country:\t$country"
 
         echo ""
@@ -962,11 +962,11 @@ function db_account_space
     #Check
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
 
-        quota=$(sed -n 's/.*"allocated": \([0-9]*\).*/\1/p' "$RESPONSE_FILE")
+        quota=$(sed -n 's/.*"allocated": *\([0-9]*\).*/\1/p' "$RESPONSE_FILE")
         let quota_mb=$quota/1024/1024
         echo -e "\n\nQuota:\t$quota_mb Mb"
 
-        used=$(sed -n 's/.*"used": \([0-9]*\).*/\1/p' "$RESPONSE_FILE")
+        used=$(sed -n 's/.*"used": *\([0-9]*\).*/\1/p' "$RESPONSE_FILE")
         let used_mb=$used/1024/1024
         echo -e "Used:\t$used_mb Mb"
 
@@ -1126,7 +1126,7 @@ function db_list_outfile
             #Extracting directory content [...]
             #and replacing "}, {" with "}\n{"
             #I don't like this piece of code... but seems to be the only way to do this with SED, writing a portable code...
-            local DIR_CONTENT=$(sed -n 's/.*: \[{\(.*\)/\1/p' "$RESPONSE_FILE" | sed 's/}, *{/}\
+            local DIR_CONTENT=$(sed -n 's/.*:[ ]*\[{\(.*\)/\1/p' "$RESPONSE_FILE" | sed 's/}, *{/}\
     {/g')
 
             #Converting escaped quotes to unicode format
@@ -1335,7 +1335,7 @@ function db_share
     #Check
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
         print " > Share link: "
-        SHARE_LINK=$(sed -n 's/.*"url": "\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+        SHARE_LINK=$(sed -n 's/.*"url": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
         echo "$SHARE_LINK"
     else
         get_Share "$FILE_DST"
@@ -1353,7 +1353,7 @@ function get_Share
     #Check
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
         print " > Share link: "
-        SHARE_LINK=$(sed -n 's/.*"url": "\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+        SHARE_LINK=$(sed -n 's/.*"url": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
         echo "$SHARE_LINK"
     else
         print "FAILED\n"
@@ -1470,7 +1470,7 @@ function db_sha
         return
     fi
 
-    local SHA256=$(sed -n 's/.*"content_hash": "\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+    local SHA256=$(sed -n 's/.*"content_hash": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
     echo "$SHA256"
 }
 

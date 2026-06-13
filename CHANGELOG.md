@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Version 1.0.15 - 13 Jun 2026
+* Fix jgwill/droxul#1: `list`/`info`/`space`/`share`/`sha` returned empty because Dropbox now emits compact JSON (`"entries":[{`) instead of pretty-spaced JSON (`"entries": [{`). All response parsers are now whitespace-tolerant (`: ` -> `: *`), backward-compatible with the old spaced format. Not a token/auth change — the legacy `OAUTH_ACCESS_TOKEN` still works.
+
 ## Version 1.0 - 10 Aug 2016
 * Add search option
 * Increase chunk size to 50MB for better performance
