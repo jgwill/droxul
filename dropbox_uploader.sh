@@ -1335,7 +1335,7 @@ function db_share
     #Check
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
         print " > Share link: "
-        SHARE_LINK=$(sed -n 's/.*"url": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+        SHARE_LINK=$(sed -n 's/.*"url": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE" | sed 's/\\u0026/\&/g')
         echo "$SHARE_LINK"
     else
         get_Share "$FILE_DST"
@@ -1353,7 +1353,7 @@ function get_Share
     #Check
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
         print " > Share link: "
-        SHARE_LINK=$(sed -n 's/.*"url": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE")
+        SHARE_LINK=$(sed -n 's/.*"url": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE" | sed 's/\\u0026/\&/g')
         echo "$SHARE_LINK"
     else
         print "FAILED\n"

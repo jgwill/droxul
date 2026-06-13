@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Version 1.0.17 - 13 Jun 2026
+* Fix jgwill/droxul#2 `share`: the returned URL contained Dropbox's JSON-escaped ampersand (the literal six characters `backslash-u-0-0-2-6`) instead of a real `&`, e.g. `...rlkey=xxx<esc>dl=0`, producing an unusable link. The share-link extractor now decodes that escape into `&`. Surfaced by the new Dropbox `scl/fi/` share-link format, which appends a `&dl=0` query parameter.
+
 ## Version 1.0.15 - 13 Jun 2026
 * Fix jgwill/droxul#1: `list`/`info`/`space`/`share`/`sha` returned empty because Dropbox now emits compact JSON (`"entries":[{`) instead of pretty-spaced JSON (`"entries": [{`). All response parsers are now whitespace-tolerant (`: ` -> `: *`), backward-compatible with the old spaced format. Not a token/auth change — the legacy `OAUTH_ACCESS_TOKEN` still works.
 
