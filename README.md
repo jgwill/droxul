@@ -46,7 +46,7 @@ Commands:
          mkdir    <REMOTE_DIR>
          list     [REMOTE_DIR]
          monitor  [REMOTE_DIR] [TIMEOUT]
-         share    <REMOTE_FILE>
+         share    <REMOTE_FILE> [-D|--download]
          saveurl  <URL> <REMOTE_DIR>
          search   <QUERY>
          info
@@ -62,6 +62,7 @@ Optional parameters:
         -p            Show cURL progress meter
         -k            Doesn't check for SSL certificates (insecure)
         -x            Ignores/excludes directories or files from syncing. -x filename -x directoryname. example: -x .git
+        -D, --download  For 'share': return a direct-download link (dl=1) instead of a preview link (dl=0)
 
 For more info and examples, please see the README file.
 ```
@@ -168,8 +169,8 @@ List the contents of the remote Dropbox folder
 * **monitor** [REMOTE_DIR] [TIMEOUT]  
 Monitor the remote Dropbox folder for changes. If timeout is specified, at the first change event the function will return.
 
-* **share** &lt;REMOTE_FILE&gt;  
-Get a public share link for the specified file or directory
+* **share** &lt;REMOTE_FILE&gt; [-D|--download]  
+Get a public share link for the specified file or directory. Pass `-D` (or `--download`) to return a direct-download link (`dl=1`) that downloads the file instead of opening the Dropbox preview page (`dl=0`).
 
 * **saveurl** &lt;URL&gt; &lt;REMOTE_DIR&gt;  
 Download a file from an URL to a Dropbox folder directly (the file is NOT downloaded locally)
@@ -223,6 +224,7 @@ Ignores/excludes directories or files from syncing.
     ./dropbox_uploader.sh mkdir /myDir/
     ./dropbox_uploader.sh upload "My File.txt" "My File 2.txt"
     ./dropbox_uploader.sh share "My File.txt"
+    ./dropbox_uploader.sh share "My File.txt" --download
     ./dropbox_uploader.sh list
 ```
 

@@ -86,6 +86,19 @@ if [[ ! -d "$TMP_DIR" ]]; then
     exit 1
 fi
 
+#Direct-download share flag (-D / --download): emit a dl=1 link instead of dl=0.
+#Stripped here (in any position) so it doesn't disturb getopts or the positional
+#COMMAND/ARG parsing below.
+DOWNLOAD_LINK=0
+_DU_ARGS=()
+for _DU_ARG in "$@"; do
+    case "$_DU_ARG" in
+        -D|--download) DOWNLOAD_LINK=1 ;;
+        *) _DU_ARGS+=("$_DU_ARG") ;;
+    esac
+done
+set -- "${_DU_ARGS[@]}"
+
 #Look for optional config file parameter
 while getopts ":qpskdhf:x:" opt; do
     case $opt in
@@ -269,7 +282,7 @@ function usage
     echo -e "\t mkdir    <REMOTE_DIR>"
     echo -e "\t list     [REMOTE_DIR]"
     echo -e "\t monitor  [REMOTE_DIR] [TIMEOUT]"
-    echo -e "\t share    <REMOTE_FILE>"
+    echo -e "\t share    <REMOTE_FILE> [-D|--download]"
     echo -e "\t saveurl  <URL> <REMOTE_DIR>"
     echo -e "\t search   <QUERY>"
     echo -e "\t info"
@@ -285,6 +298,7 @@ function usage
     echo -e "\t-p            Show cURL progress meter"
     echo -e "\t-k            Doesn't check for SSL certificates (insecure)"
     echo -e "\t-x            Ignores/excludes directories or files from syncing. -x filename -x directoryname. example: -x .git"
+    echo -e "\t-D, --download  For 'share': return a direct-download link (dl=1) instead of a preview link (dl=0)"
 
     echo -en "\nFor more info and examples, please see the README file.\n\n"
     remove_temp_files
@@ -1336,6 +1350,9 @@ function db_share
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
         print " > Share link: "
         SHARE_LINK=$(sed -n 's/.*"url": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE" | sed 's/\\u0026/\&/g')
+        if [[ $DOWNLOAD_LINK == 1 ]]; then
+            SHARE_LINK=$(echo "$SHARE_LINK" | sed 's/dl=0/dl=1/')
+        fi
         echo "$SHARE_LINK"
     else
         get_Share "$FILE_DST"
@@ -1354,6 +1371,9 @@ function get_Share
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
         print " > Share link: "
         SHARE_LINK=$(sed -n 's/.*"url": *"\([^"]*\).*/\1/p' "$RESPONSE_FILE" | sed 's/\\u0026/\&/g')
+        if [[ $DOWNLOAD_LINK == 1 ]]; then
+            SHARE_LINK=$(echo "$SHARE_LINK" | sed 's/dl=0/dl=1/')
+        fi
         echo "$SHARE_LINK"
     else
         print "FAILED\n"
