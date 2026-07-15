@@ -33,6 +33,7 @@ CHUNK_SIZE=50
 
 #Default values
 TMP_DIR="/tmp"
+TERMUX_TMP_DIR="/data/data/com.termux/files/usr/tmp"
 DEBUG=0
 QUIET=0
 SHOW_PROGRESSBAR=0
@@ -62,9 +63,6 @@ API_SAVEURL_URL="https://api.dropboxapi.com/2/files/save_url"
 API_SAVEURL_JOBSTATUS_URL="https://api.dropboxapi.com/2/files/save_url/check_job_status"
 API_SEARCH_URL="https://api.dropboxapi.com/2/files/search"
 APP_CREATE_URL="https://www.dropbox.com/developers/apps"
-RESPONSE_FILE="$TMP_DIR/du_resp_$RANDOM"
-CHUNK_FILE="$TMP_DIR/du_chunk_$RANDOM"
-TEMP_FILE="$TMP_DIR/du_tmp_$RANDOM"
 BIN_DEPS="sed basename date grep stat dd mkdir"
 VERSION="1.0"
 
@@ -80,11 +78,19 @@ shopt -s nullglob #Bash allows filename patterns which match no files to expand 
 shopt -s dotglob  #Bash includes filenames beginning with a "." in the results of filename expansion
 
 #Check temp folder
+if [[ ! -d "$TMP_DIR" && -d "$TERMUX_TMP_DIR" ]]; then
+    TMP_DIR="$TERMUX_TMP_DIR"
+fi
+
 if [[ ! -d "$TMP_DIR" ]]; then
     echo -e "Error: the temporary folder $TMP_DIR doesn't exists!"
     echo -e "Please edit this script and set the TMP_DIR variable to a valid temporary folder to use."
     exit 1
 fi
+
+RESPONSE_FILE="$TMP_DIR/du_resp_$RANDOM"
+CHUNK_FILE="$TMP_DIR/du_chunk_$RANDOM"
+TEMP_FILE="$TMP_DIR/du_tmp_$RANDOM"
 
 #Direct-download share flag (-D / --download): emit a dl=1 link instead of dl=0.
 #Stripped here (in any position) so it doesn't disturb getopts or the positional
