@@ -286,7 +286,7 @@ function usage
     echo -e "\t move     <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>"
     echo -e "\t copy     <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>"
     echo -e "\t mkdir    <REMOTE_DIR>"
-    echo -e "\t list     [REMOTE_DIR]"
+    echo -e "\t list|ls  [REMOTE_DIR]"
     echo -e "\t monitor  [REMOTE_DIR] [TIMEOUT]"
     echo -e "\t share    <REMOTE_FILE> [-D|--download]"
     echo -e "\t saveurl  <URL> <REMOTE_DIR>"
@@ -1729,7 +1729,7 @@ case $COMMAND in
 
     ;;
 
-    list)
+    list|ls)
 
         DIR_DST="$ARG1"
 

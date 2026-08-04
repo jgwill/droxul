@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Version 1.1.2 - 4 Aug 2026
+* `ls` is now an alias of the `list` command: `droxul ls [REMOTE_DIR]` behaves exactly like `droxul list [REMOTE_DIR]`. Additive and backward-compatible.
+
 ## Version 1.1.0 - 13 Jun 2026
 * Feature jgwill/droxul#3: `share <REMOTE_FILE>` accepts `-D` / `--download` to return a direct-download link (`dl=1`) instead of the default preview link (`dl=0`), so the link downloads the file rather than opening the Dropbox site. The flag works in any position (`droxul -D share /f`, `droxul share /f --download`, `droxul share --download /f`) and applies to both the primary share path and the existing-link fallback. Additive and backward-compatible — default behavior unchanged.
 

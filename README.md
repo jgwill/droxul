@@ -44,7 +44,7 @@ Commands:
          move     <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>
          copy     <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>
          mkdir    <REMOTE_DIR>
-         list     [REMOTE_DIR]
+         list|ls  [REMOTE_DIR]
          monitor  [REMOTE_DIR] [TIMEOUT]
          share    <REMOTE_FILE> [-D|--download]
          saveurl  <URL> <REMOTE_DIR>
@@ -163,7 +163,7 @@ Copy a remote file or directory
 * **mkdir** &lt;REMOTE_DIR&gt;  
 Create a remote directory on Dropbox
 
-* **list** [REMOTE_DIR]  
+* **list** [REMOTE_DIR] (alias: **ls**)  
 List the contents of the remote Dropbox folder
 
 * **monitor** [REMOTE_DIR] [TIMEOUT]  
