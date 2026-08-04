@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 1.2.0 - 4 Aug 2026
+* New command `upload-share <LOCAL_FILE/DIR> <REMOTE_FILE/DIR>` (alias `upln`): uploads then prints the share link in one step. The link targets the *resolved* remote path, so `upln f.pdf /shared/` shares the uploaded file rather than the folder. Nothing is shared if the upload fails. Honors `-D`/`--download` for a direct-download link.
+* Shell-familiar aliases across the command set, matching the vocabulary `dropShell.sh` already used:
+  `upload`→`put`, `download`→`get`, `delete`→`rm`/`del`, `move`→`mv`, `copy`→`cp`, `list`→`ls`/`dir`, `share`→`link`, `saveurl`→`wget`/`fetch`, `search`→`find`, `info`→`whoami`/`account`, `space`→`free`/`df`. Existing `remove`/`rename` still work. Additive and backward-compatible.
+* Note: `rm`/`del` delete without confirmation, exactly like `delete` always has.
+
 ## Version 1.1.2 - 4 Aug 2026
 * `ls` is now an alias of the `list` command: `droxul ls [REMOTE_DIR]` behaves exactly like `droxul list [REMOTE_DIR]`. Additive and backward-compatible.
 

@@ -26,6 +26,14 @@ droxul
 droxul upload mybackup.tar.gz /backups/mybackup.tar.gz 
 droxul list /
 droxul download /backups/mybackup.tar.gz
+
+# Most commands have shell-familiar aliases: put, get, ls, rm, mv, cp, df ...
+droxul ls /
+droxul put mybackup.tar.gz /backups/
+
+# Upload and get the share link in one step
+droxul upload-share notes.pdf /shared/
+droxul upln notes.pdf /shared/ -D   # direct-download link
 # ... Type only droxul on the prompt
 ```
 ### Full Usage list
@@ -38,19 +46,20 @@ Packaged and distributed by: Guillaume Descoteaux-Isabelle,2018-2020
 Usage: droxul [PARAMETERS] COMMAND...
 
 Commands:
-         upload   <LOCAL_FILE/DIR ...>  <REMOTE_FILE/DIR>
-         download <REMOTE_FILE/DIR> [LOCAL_FILE/DIR]
-         delete   <REMOTE_FILE/DIR>
-         move     <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>
-         copy     <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>
-         mkdir    <REMOTE_DIR>
-         list|ls  [REMOTE_DIR]
-         monitor  [REMOTE_DIR] [TIMEOUT]
-         share    <REMOTE_FILE> [-D|--download]
-         saveurl  <URL> <REMOTE_DIR>
-         search   <QUERY>
-         info
-         space
+         upload       <LOCAL_FILE/DIR ...> <REMOTE_FILE/DIR>    (alias: put)
+         download     <REMOTE_FILE/DIR> [LOCAL_FILE/DIR]        (alias: get)
+         delete       <REMOTE_FILE/DIR>                         (aliases: remove, rm, del)
+         move         <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>       (aliases: rename, mv)
+         copy         <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>       (alias: cp)
+         mkdir        <REMOTE_DIR>
+         list         [REMOTE_DIR]                              (aliases: ls, dir)
+         monitor      [REMOTE_DIR] [TIMEOUT]
+         share        <REMOTE_FILE> [-D|--download]             (alias: link)
+         upload-share <LOCAL_FILE/DIR> <REMOTE_FILE/DIR> [-D]   (alias: upln)
+         saveurl      <URL> <REMOTE_DIR>                        (aliases: wget, fetch)
+         search       <QUERY>                                   (alias: find)
+         info                                                   (aliases: whoami, account)
+         space                                                  (aliases: free, df)
          unlink
 
 Optional parameters:
@@ -101,6 +110,8 @@ Please refer to the [Wiki](https://github.com/andreafabrizi/Dropbox-Uploader/wik
 * Shell wildcard expansion (only for upload)
 * Delete/Move/Rename/Copy/List/Share files
 * Create share link
+* Upload and share in one step (`upload-share` / `upln`)
+* Shell-familiar command aliases (`ls`, `put`, `get`, `rm`, `mv`, `cp`, `df`, ...)
 * Monitor for changes
 
 ## Getting started
@@ -139,7 +150,7 @@ The syntax is quite simple:
 
 **Available commands:**
 
-* **upload** &lt;LOCAL_FILE/DIR ...&gt; &lt;REMOTE_FILE/DIR&gt;  
+* **upload** &lt;LOCAL_FILE/DIR ...&gt; &lt;REMOTE_FILE/DIR&gt; (alias: **put**)  
 Upload a local file or directory to a remote Dropbox folder.  
 If the file is bigger than 150Mb the file is uploaded using small chunks (default 50Mb); 
 in this case a . (dot) is printed for every chunk successfully uploaded and a * (star) if an error 
@@ -148,40 +159,43 @@ Only if the file is smaller than 150Mb, the standard upload API is used, and if 
 the default curl progress bar is displayed during the upload process.  
 The local file/dir parameter supports wildcards expansion.
 
-* **download** &lt;REMOTE_FILE/DIR&gt; [LOCAL_FILE/DIR]  
+* **download** &lt;REMOTE_FILE/DIR&gt; [LOCAL_FILE/DIR] (alias: **get**)  
 Download file or directory from Dropbox to a local folder
 
-* **delete** &lt;REMOTE_FILE/DIR&gt;  
+* **delete** &lt;REMOTE_FILE/DIR&gt; (aliases: **remove**, **rm**, **del**)  
 Remove a remote file or directory from Dropbox
 
-* **move** &lt;REMOTE_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt;  
+* **move** &lt;REMOTE_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt; (aliases: **rename**, **mv**)  
 Move or rename a remote file or directory
 
-* **copy** &lt;REMOTE_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt;  
+* **copy** &lt;REMOTE_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt; (alias: **cp**)  
 Copy a remote file or directory
 
 * **mkdir** &lt;REMOTE_DIR&gt;  
 Create a remote directory on Dropbox
 
-* **list** [REMOTE_DIR] (alias: **ls**)  
+* **list** [REMOTE_DIR] (aliases: **ls**, **dir**)  
 List the contents of the remote Dropbox folder
 
 * **monitor** [REMOTE_DIR] [TIMEOUT]  
 Monitor the remote Dropbox folder for changes. If timeout is specified, at the first change event the function will return.
 
-* **share** &lt;REMOTE_FILE&gt; [-D|--download]  
+* **share** &lt;REMOTE_FILE&gt; [-D|--download] (alias: **link**)  
 Get a public share link for the specified file or directory. Pass `-D` (or `--download`) to return a direct-download link (`dl=1`) that downloads the file instead of opening the Dropbox preview page (`dl=0`).
 
-* **saveurl** &lt;URL&gt; &lt;REMOTE_DIR&gt;  
+* **upload-share** &lt;LOCAL_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt; [-D|--download] (alias: **upln**)  
+Upload a local file or directory and immediately print its public share link — `upload` followed by `share` in one step. The link points at the resolved remote path, so passing a destination folder (e.g. `/backups/`) shares the uploaded file itself, not the folder. Nothing is shared if the upload fails. Accepts `-D` (or `--download`) for a direct-download link.
+
+* **saveurl** &lt;URL&gt; &lt;REMOTE_DIR&gt; (aliases: **wget**, **fetch**)  
 Download a file from an URL to a Dropbox folder directly (the file is NOT downloaded locally)
 
-* **search** &lt;QUERY&gt;
+* **search** &lt;QUERY&gt; (alias: **find**)
 Search for a specific pattern on Dropbox and returns the list of matching files or directories
 
-* **info**  
+* **info** (aliases: **whoami**, **account**)  
 Print some info about your Dropbox account
 
-* **space**
+* **space** (aliases: **free**, **df**)
 Print some info about the space usage on your Dropbox account
 
 * **unlink**  

@@ -40,6 +40,8 @@ SHOW_PROGRESSBAR=0
 SKIP_EXISTING_FILES=0
 ERROR_STATUS=0
 EXCLUDE=()
+#Remote path resolved by the last db_upload call (used by upload-share)
+DB_UPLOAD_DST=""
 
 #Don't edit these...
 API_LONGPOLL_FOLDER="https://notify.dropboxapi.com/2/files/list_folder/longpoll"
@@ -280,19 +282,20 @@ function usage
     echo -e "Usage: $0 [PARAMETERS] COMMAND..."
     echo -e "\nCommands:"
 
-    echo -e "\t upload   <LOCAL_FILE/DIR ...>  <REMOTE_FILE/DIR>"
-    echo -e "\t download <REMOTE_FILE/DIR> [LOCAL_FILE/DIR]"
-    echo -e "\t delete   <REMOTE_FILE/DIR>"
-    echo -e "\t move     <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>"
-    echo -e "\t copy     <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>"
-    echo -e "\t mkdir    <REMOTE_DIR>"
-    echo -e "\t list|ls  [REMOTE_DIR]"
-    echo -e "\t monitor  [REMOTE_DIR] [TIMEOUT]"
-    echo -e "\t share    <REMOTE_FILE> [-D|--download]"
-    echo -e "\t saveurl  <URL> <REMOTE_DIR>"
-    echo -e "\t search   <QUERY>"
-    echo -e "\t info"
-    echo -e "\t space"
+    echo -e "\t upload       <LOCAL_FILE/DIR ...> <REMOTE_FILE/DIR>    (alias: put)"
+    echo -e "\t download     <REMOTE_FILE/DIR> [LOCAL_FILE/DIR]        (alias: get)"
+    echo -e "\t delete       <REMOTE_FILE/DIR>                         (aliases: remove, rm, del)"
+    echo -e "\t move         <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>       (aliases: rename, mv)"
+    echo -e "\t copy         <REMOTE_FILE/DIR> <REMOTE_FILE/DIR>       (alias: cp)"
+    echo -e "\t mkdir        <REMOTE_DIR>"
+    echo -e "\t list         [REMOTE_DIR]                              (aliases: ls, dir)"
+    echo -e "\t monitor      [REMOTE_DIR] [TIMEOUT]"
+    echo -e "\t share        <REMOTE_FILE> [-D|--download]             (alias: link)"
+    echo -e "\t upload-share <LOCAL_FILE/DIR> <REMOTE_FILE/DIR> [-D]   (alias: upln)"
+    echo -e "\t saveurl      <URL> <REMOTE_DIR>                        (aliases: wget, fetch)"
+    echo -e "\t search       <QUERY>                                   (alias: find)"
+    echo -e "\t info                                                   (aliases: whoami, account)"
+    echo -e "\t space                                                  (aliases: free, df)"
     echo -e "\t unlink"
 
     echo -e "\nOptional parameters:"
@@ -501,6 +504,10 @@ function db_upload
         local filename=$(basename "$SRC")
         DST="$DST/$filename"
     fi
+
+    #Publishing the resolved remote path, so callers (upload-share) know
+    #where the file actually landed
+    DB_UPLOAD_DST="$DST"
 
     #It's a directory
     if [[ -d $SRC ]]; then
@@ -1389,6 +1396,24 @@ function get_Share
     fi
 }
 
+#Upload a file/dir and share it in one step
+#$1 = Local source file/dir
+#$2 = Remote destination file/dir
+function db_upload_share
+{
+    local FILE_SRC="$1"
+    local FILE_DST="$2"
+
+    db_upload "$FILE_SRC" "$FILE_DST"
+
+    #Only share what actually got uploaded
+    if [[ $ERROR_STATUS -ne 0 || $DB_UPLOAD_DST == "" ]]; then
+        return
+    fi
+
+    db_share "$DB_UPLOAD_DST"
+}
+
 #Search on Dropbox
 #$1 = query
 function db_search
@@ -1602,7 +1627,7 @@ let argnum=$#-$OPTIND
 #CHECKING PARAMS VALUES
 case $COMMAND in
 
-    upload)
+    upload|put)
 
         if [[ $argnum -lt 2 ]]; then
             usage
@@ -1617,7 +1642,7 @@ case $COMMAND in
 
     ;;
 
-    download)
+    download|get)
 
         if [[ $argnum -lt 1 ]]; then
             usage
@@ -1630,7 +1655,7 @@ case $COMMAND in
 
     ;;
 
-    saveurl)
+    saveurl|wget|fetch)
 
         if [[ $argnum -lt 1 ]]; then
             usage
@@ -1643,7 +1668,7 @@ case $COMMAND in
 
     ;;
 
-    share)
+    share|link)
 
         if [[ $argnum -lt 1 ]]; then
             usage
@@ -1655,19 +1680,32 @@ case $COMMAND in
 
     ;;
 
-    info)
+    upload-share|upln)
+
+        if [[ $argnum -lt 2 ]]; then
+            usage
+        fi
+
+        FILE_SRC="$ARG1"
+        FILE_DST="$ARG2"
+
+        db_upload_share "$FILE_SRC" "/$FILE_DST"
+
+    ;;
+
+    info|whoami|account)
 
         db_account_info
 
     ;;
 
-    space)
+    space|free|df)
 
         db_account_space
 
     ;;
 
-    delete|remove)
+    delete|remove|rm|del)
 
         if [[ $argnum -lt 1 ]]; then
             usage
@@ -1679,7 +1717,7 @@ case $COMMAND in
 
     ;;
 
-    move|rename)
+    move|rename|mv)
 
         if [[ $argnum -lt 2 ]]; then
             usage
@@ -1692,7 +1730,7 @@ case $COMMAND in
 
     ;;
 
-    copy)
+    copy|cp)
 
         if [[ $argnum -lt 2 ]]; then
             usage
@@ -1717,7 +1755,7 @@ case $COMMAND in
 
     ;;
 
-    search)
+    search|find)
 
         if [[ $argnum -lt 1 ]]; then
             usage
@@ -1729,7 +1767,7 @@ case $COMMAND in
 
     ;;
 
-    list|ls)
+    list|ls|dir)
 
         DIR_DST="$ARG1"
 
