@@ -34,6 +34,7 @@ droxul put mybackup.tar.gz /backups/
 # Upload and get the share link in one step
 droxul upload-share notes.pdf /shared/
 droxul upln notes.pdf /shared/ -D   # direct-download link
+droxul upld notes.pdf /shared/      # same thing, -D implied
 # ... Type only droxul on the prompt
 ```
 ### Full Usage list
@@ -56,6 +57,7 @@ Commands:
          monitor      [REMOTE_DIR] [TIMEOUT]
          share        <REMOTE_FILE> [-D|--download]             (alias: link)
          upload-share <LOCAL_FILE/DIR> <REMOTE_FILE/DIR> [-D]   (alias: upln)
+         upld         <LOCAL_FILE/DIR> <REMOTE_FILE/DIR>        (= upln -D, alias: uplnd)
          saveurl      <URL> <REMOTE_DIR>                        (aliases: wget, fetch)
          search       <QUERY>                                   (alias: find)
          info                                                   (aliases: whoami, account)
@@ -185,6 +187,9 @@ Get a public share link for the specified file or directory. Pass `-D` (or `--do
 
 * **upload-share** &lt;LOCAL_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt; [-D|--download] (alias: **upln**)  
 Upload a local file or directory and immediately print its public share link — `upload` followed by `share` in one step. The link points at the resolved remote path, so passing a destination folder (e.g. `/backups/`) shares the uploaded file itself, not the folder. Nothing is shared if the upload fails. Accepts `-D` (or `--download`) for a direct-download link.
+
+* **upld** &lt;LOCAL_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt; (alias: **uplnd**, long form: **upload-share-download**)  
+Same as `upload-share` with `-D` always implied — upload and print a direct-download link (`dl=1`) in one step. Equivalent to `droxul -D upln <LOCAL> <REMOTE>`.
 
 * **saveurl** &lt;URL&gt; &lt;REMOTE_DIR&gt; (aliases: **wget**, **fetch**)  
 Download a file from an URL to a Dropbox folder directly (the file is NOT downloaded locally)

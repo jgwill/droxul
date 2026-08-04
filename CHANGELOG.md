@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Version 1.3.0 - 4 Aug 2026
+* New `upld` / `uplnd` (long form `upload-share-download`): `upload-share` with `-D` always implied — upload and print a direct-download link (`dl=1`) in one step. Exactly equivalent to `droxul -D upln <LOCAL> <REMOTE>`. Plain `upln` keeps returning a preview link (`dl=0`), unchanged.
+
 ## Version 1.2.0 - 4 Aug 2026
 * New command `upload-share <LOCAL_FILE/DIR> <REMOTE_FILE/DIR>` (alias `upln`): uploads then prints the share link in one step. The link targets the *resolved* remote path, so `upln f.pdf /shared/` shares the uploaded file rather than the folder. Nothing is shared if the upload fails. Honors `-D`/`--download` for a direct-download link.
 * Shell-familiar aliases across the command set, matching the vocabulary `dropShell.sh` already used:

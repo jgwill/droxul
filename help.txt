@@ -14,6 +14,7 @@ Commands:
          monitor      [REMOTE_DIR] [TIMEOUT]
          share        <REMOTE_FILE> [-D|--download]             (alias: link)
          upload-share <LOCAL_FILE/DIR> <REMOTE_FILE/DIR> [-D]   (alias: upln)
+         upld         <LOCAL_FILE/DIR> <REMOTE_FILE/DIR>        (= upln -D, alias: uplnd)
          saveurl      <URL> <REMOTE_DIR>                        (aliases: wget, fetch)
          search       <QUERY>                                   (alias: find)
          info                                                   (aliases: whoami, account)

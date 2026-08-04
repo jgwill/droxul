@@ -292,6 +292,7 @@ function usage
     echo -e "\t monitor      [REMOTE_DIR] [TIMEOUT]"
     echo -e "\t share        <REMOTE_FILE> [-D|--download]             (alias: link)"
     echo -e "\t upload-share <LOCAL_FILE/DIR> <REMOTE_FILE/DIR> [-D]   (alias: upln)"
+    echo -e "\t upld         <LOCAL_FILE/DIR> <REMOTE_FILE/DIR>        (= upln -D, alias: uplnd)"
     echo -e "\t saveurl      <URL> <REMOTE_DIR>                        (aliases: wget, fetch)"
     echo -e "\t search       <QUERY>                                   (alias: find)"
     echo -e "\t info                                                   (aliases: whoami, account)"
@@ -1680,11 +1681,16 @@ case $COMMAND in
 
     ;;
 
-    upload-share|upln)
+    upload-share|upln|upload-share-download|upld|uplnd)
 
         if [[ $argnum -lt 2 ]]; then
             usage
         fi
+
+        #upld/uplnd are upln with -D implied: always a direct-download link
+        case $COMMAND in
+            upload-share-download|upld|uplnd) DOWNLOAD_LINK=1 ;;
+        esac
 
         FILE_SRC="$ARG1"
         FILE_DST="$ARG2"
