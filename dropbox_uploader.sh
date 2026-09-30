@@ -95,13 +95,17 @@ CHUNK_FILE="$TMP_DIR/du_chunk_$RANDOM"
 TEMP_FILE="$TMP_DIR/du_tmp_$RANDOM"
 
 #Direct-download share flag (-D / --download): emit a dl=1 link instead of dl=0.
-#Stripped here (in any position) so it doesn't disturb getopts or the positional
+#Help request (--help or /?): print usage and exit 0, before the config is loaded
+#(so it also works before the first-time setup wizard has run).
+#Stripped here (in any position) so they don't disturb getopts or the positional
 #COMMAND/ARG parsing below.
 DOWNLOAD_LINK=0
+SHOW_HELP=0
 _DU_ARGS=()
 for _DU_ARG in "$@"; do
     case "$_DU_ARG" in
         -D|--download) DOWNLOAD_LINK=1 ;;
+        --help|'/?') SHOW_HELP=1 ;;
         *) _DU_ARGS+=("$_DU_ARG") ;;
     esac
 done
@@ -275,8 +279,11 @@ function file_size
 
 
 #Usage
+#$1 = Exit code (default 1: wrong usage. Explicit help requests exit 0)
 function usage
 {
+    local EXIT_CODE="${1:-1}"
+
     echo -e "Dropbox Uploader v$VERSION"
     echo -e "Andrea Fabrizi - andrea.fabrizi@gmail.com\n"
     echo -e "Usage: $0 [PARAMETERS] COMMAND..."
@@ -309,11 +316,17 @@ function usage
     echo -e "\t-k            Doesn't check for SSL certificates (insecure)"
     echo -e "\t-x            Ignores/excludes directories or files from syncing. -x filename -x directoryname. example: -x .git"
     echo -e "\t-D, --download  For 'share': return a direct-download link (dl=1) instead of a preview link (dl=0)"
+    echo -e "\t--help, /?    Show this help"
 
     echo -en "\nFor more info and examples, please see the README file.\n\n"
     remove_temp_files
-    exit 1
+    exit $EXIT_CODE
 }
+
+#Explicit help request: no config needed, not an error
+if [[ $SHOW_HELP == 1 ]]; then
+    usage 0
+fi
 
 #Check the curl exit code
 function check_http_response

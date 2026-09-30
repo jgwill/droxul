@@ -74,6 +74,7 @@ Optional parameters:
         -k            Doesn't check for SSL certificates (insecure)
         -x            Ignores/excludes directories or files from syncing. -x filename -x directoryname. example: -x .git
         -D, --download  For 'share': return a direct-download link (dl=1) instead of a preview link (dl=0)
+        --help, /?    Show this help
 
 For more info and examples, please see the README file.
 ```
@@ -232,6 +233,9 @@ Doesn't check for SSL certificates (insecure)
 * **-x &lt;FILENAME&gt;**  
 Ignores/excludes directories or files from syncing.
 -x filename -x directoryname. 
+
+* **--help**, **/?**  
+Show the usage and exit with status 0. Works in any position and without a configuration file.
 
 **Examples:**
 ```bash

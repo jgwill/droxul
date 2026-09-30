@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Version 1.3.1 - 30 Sep 2026
+* Fix: `droxul --help` failed with `Invalid option: --`; only `droxul /?` printed the usage. `--help` and `/?` now both print the usage and exit 0. They work in any position (`droxul ls --help`) and are handled before the configuration is loaded, so they no longer start the first-time setup wizard on a machine with no `~/.dropbox_uploader`. `/?` no longer reports `Unknown command` and now exits 0 instead of 1. Wrong usage (no command, unknown command, missing arguments) still exits 1. `-h` keeps meaning human-readable sizes.
+
 ## Version 1.3.0 - 4 Aug 2026
 * New `upld` / `uplnd` (long form `upload-share-download`): `upload-share` with `-D` always implied — upload and print a direct-download link (`dl=1`) in one step. Exactly equivalent to `droxul -D upln <LOCAL> <REMOTE>`. Plain `upln` keeps returning a preview link (`dl=0`), unchanged.
 
